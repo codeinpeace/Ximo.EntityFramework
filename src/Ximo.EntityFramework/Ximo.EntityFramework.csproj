@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Version>2.0.0</Version>
+    <Authors>Omar Besiso</Authors>
+    <Company>ThoughtDesign</Company>
+    <Copyright>Copyright ThoughtDesign 2017</Copyright>
+    <Product>Ximo</Product>
+    <Description>Extension for the Ximo toolset using EntityFramework. Suggested implementations of repositories, unit of work, and event sourcing are included.</Description>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ThoughtDesign/Ximo.EntityFramework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ThoughtDesign/Ximo.EntityFramework</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageTags>EntityFramework Ximo</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
