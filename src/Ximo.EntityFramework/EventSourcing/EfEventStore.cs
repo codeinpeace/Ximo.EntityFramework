@@ -78,12 +78,12 @@ namespace Ximo.EntityFramework.EventSourcing
         /// </summary>
         /// <value>The snapshot repository.</value>
         protected ISnapshotRepository<TAggregateRoot> SnapshotRepository { get; }
-
+        
         private DbSet<TEventSet> PersistedEvents => Context.Set<TEventSet>();
         private bool CanPublishEvents => DomainEventBus != null;
         private bool CanProcessSnapshots => SnapshotRepository != null;
 
-        public void Save(TAggregateRoot aggregateRoot)
+        public virtual void Save(TAggregateRoot aggregateRoot)
         {
             var set = Context.Set<TEventSet>();
 
@@ -93,7 +93,7 @@ namespace Ximo.EntityFramework.EventSourcing
             //Persist Events
             foreach (var uncommittedEvent in aggregateRoot.UncommittedEvents)
             {
-                var @event = (TEventSet) Activator.CreateInstance(typeof(TEventSet), uncommittedEvent);
+                var @event = CreateDomainEventRecord(uncommittedEvent);
                 PersistedEvents.Add(@event);
             }
 
@@ -118,6 +118,11 @@ namespace Ximo.EntityFramework.EventSourcing
 
             //Mark aggregate root as committed
             aggregateRoot.MarkAsCommitted();
+        }
+
+        protected virtual TEventSet CreateDomainEventRecord(DomainEventEnvelope uncommittedEvent)
+        {
+            return (TEventSet) Activator.CreateInstance(typeof(TEventSet), uncommittedEvent);
         }
 
         public TAggregateRoot GetById(Guid id)
