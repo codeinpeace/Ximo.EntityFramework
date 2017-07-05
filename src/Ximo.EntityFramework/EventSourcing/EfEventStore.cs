@@ -211,7 +211,7 @@ namespace Ximo.EntityFramework.EventSourcing
         protected virtual TAggregateRoot CreateDefaultInstanceOfAggregateRoot()
         {
             var aggregateRootType = typeof(TAggregateRoot).GetTypeInfo();
-            var constructor = aggregateRootType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+            var constructor = aggregateRootType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                 .FirstOrDefault(c => c.GetParameters().Length == 0);
             if (constructor == null)
             {
