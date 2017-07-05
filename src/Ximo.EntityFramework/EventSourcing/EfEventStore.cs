@@ -78,7 +78,7 @@ namespace Ximo.EntityFramework.EventSourcing
         /// </summary>
         /// <value>The snapshot repository.</value>
         protected ISnapshotRepository<TAggregateRoot> SnapshotRepository { get; }
-        
+
         private DbSet<TEventSet> PersistedEvents => Context.Set<TEventSet>();
         private bool CanPublishEvents => DomainEventBus != null;
         private bool CanProcessSnapshots => SnapshotRepository != null;
@@ -120,11 +120,6 @@ namespace Ximo.EntityFramework.EventSourcing
             aggregateRoot.MarkAsCommitted();
         }
 
-        protected virtual TEventSet CreateDomainEventRecord(DomainEventEnvelope uncommittedEvent)
-        {
-            return (TEventSet) Activator.CreateInstance(typeof(TEventSet), uncommittedEvent);
-        }
-
         public TAggregateRoot GetById(Guid id)
         {
             TAggregateRoot aggregateRoot = null;
@@ -148,7 +143,7 @@ namespace Ximo.EntityFramework.EventSourcing
 
             if (aggregateRoot == null)
             {
-                aggregateRoot = CreateInstanceFromPrivateConstructor();
+                aggregateRoot = CreateDefaultInstanceOfAggregateRoot();
             }
 
             aggregateRoot.Replay(eventWrappers);
@@ -201,6 +196,11 @@ namespace Ximo.EntityFramework.EventSourcing
             return eventWrappers;
         }
 
+        protected virtual TEventSet CreateDomainEventRecord(DomainEventEnvelope uncommittedEvent)
+        {
+            return (TEventSet) Activator.CreateInstance(typeof(TEventSet), uncommittedEvent);
+        }
+
         private DomainEventEnvelope GetDomainEventWrapperFromEvent(TEventSet @event)
         {
             var domainEvent = _serializer.Deserialize<object>(@event.Payload);
@@ -208,10 +208,16 @@ namespace Ximo.EntityFramework.EventSourcing
                 domainEvent);
         }
 
-        private TAggregateRoot CreateInstanceFromPrivateConstructor()
+        protected virtual TAggregateRoot CreateDefaultInstanceOfAggregateRoot()
         {
             var aggregateRootType = typeof(TAggregateRoot).GetTypeInfo();
-            var constructor = aggregateRootType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)[0];
+            var constructor = aggregateRootType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                .FirstOrDefault(c => c.GetParameters().Length == 0);
+            if (constructor == null)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot create a default instance of '{aggregateRootType.Name}' because it has no parameterless constructor. Either create a parameterless constructor (private, public or protected) or override the 'CreateDefaultInstanceOfAggregateRoot' to create the default EventSourcedAggregateRoot manually.");
+            }
             return (TAggregateRoot) constructor.Invoke(new object[0]);
         }
     }
