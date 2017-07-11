@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace Ximo.EntityFramework.EventSourcing
     /// <typeparam name="TContext">The type of the context.</typeparam>
     /// <seealso cref="EfRepository{TContext}" />
     /// <seealso cref="IEventStore{TAggregateRoot}" />
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public class EfEventStore<TAggregateRoot, TEventSet, TContext> : EfRepository<TContext>, IEventStore<TAggregateRoot>
         where TAggregateRoot : EventSourcedAggregateRoot
         where TEventSet : EfDomainEvent
@@ -128,17 +130,28 @@ namespace Ximo.EntityFramework.EventSourcing
             if (CanProcessSnapshots)
             {
                 var result = SnapshotRepository.GetLatestSnapshot(id);
-                var lastEventSequence = 0;
                 if (result != null)
                 {
                     aggregateRoot = result.Item1;
-                    lastEventSequence = result.Item2;
+                    var lastEventSequence = result.Item2;
+                    eventWrappers = GetAggregateEvents(id, lastEventSequence);
                 }
-                eventWrappers = GetAggregateEvents(id, lastEventSequence);
+                else
+                {
+                    eventWrappers = GetAggregateEvents(id);
+                    if (eventWrappers == null || !eventWrappers.Any())
+                    {
+                        return null;
+                    }
+                }
             }
             else
             {
                 eventWrappers = GetAggregateEvents(id);
+                if (eventWrappers == null || !eventWrappers.Any())
+                {
+                    return null;
+                }
             }
 
             if (aggregateRoot == null)
