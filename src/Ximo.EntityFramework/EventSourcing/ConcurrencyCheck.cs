@@ -18,7 +18,7 @@ namespace Ximo.EntityFramework.EventSourcing
 
             if (aggregateRoot.Version != persistedVersion + 1)
             {
-                string errorMessage =
+                var errorMessage =
                     $"The aggregate with aggregate root of type {aggregateRoot.GetType().Name} has been modified and the event stream cannot be appended.";
                 throw new AggregateConcurrencyException(errorMessage);
             }

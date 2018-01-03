@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>2.4</Version>
+    <Version>2.4.1</Version>
     <Authors>Omar Besiso</Authors>
     <Company>ThoughtDesign</Company>
     <Copyright>Copyright ThoughtDesign 2017</Copyright>
@@ -15,15 +15,15 @@
     <RepositoryUrl>https://github.com/ThoughtDesign/Ximo.EntityFramework</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>EntityFramework Ximo</PackageTags>
-    <AssemblyVersion>2.4.0.0</AssemblyVersion>
-    <FileVersion>2.4.0.0</FileVersion>
+    <AssemblyVersion>2.4.1.0</AssemblyVersion>
+    <FileVersion>2.4.1.0</FileVersion>
     <PackageReleaseNotes>Updated to .NET Core/Standard 2.0</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Ximo" Version="2.3.1" />
+    <PackageReference Include="Ximo" Version="2.4.0" />
   </ItemGroup>
 
 </Project>

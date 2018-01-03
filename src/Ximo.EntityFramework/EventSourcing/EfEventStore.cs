@@ -107,6 +107,7 @@ namespace Ximo.EntityFramework.EventSourcing
             {
                 SnapshotRepository.SaveSnapshot(aggregateRoot);
             }
+
             Context.SaveChanges();
 
             //Publish events if possible
@@ -224,13 +225,15 @@ namespace Ximo.EntityFramework.EventSourcing
         protected virtual TAggregateRoot CreateDefaultInstanceOfAggregateRoot()
         {
             var aggregateRootType = typeof(TAggregateRoot).GetTypeInfo();
-            var constructor = aggregateRootType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            var constructor = aggregateRootType
+                .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                 .FirstOrDefault(c => c.GetParameters().Length == 0);
             if (constructor == null)
             {
                 throw new InvalidOperationException(
                     $"Cannot create a default instance of '{aggregateRootType.Name}' because it has no parameterless constructor. Either create a parameterless constructor (private, public or protected) or override the 'CreateDefaultInstanceOfAggregateRoot' to create the default EventSourcedAggregateRoot manually.");
             }
+
             return (TAggregateRoot) constructor.Invoke(new object[0]);
         }
     }
